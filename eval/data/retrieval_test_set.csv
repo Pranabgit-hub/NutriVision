@@ -1,0 +1,91 @@
+food_id,correct_name,query_label,difficulty
+1,cooked white rice,steamed white rice,easy
+1,cooked white rice,plain white rice on a plate,easy
+1,cooked white rice,rice (uncertain),medium
+2,cooked brown rice,brown rice cooked,easy
+2,cooked brown rice,whole grain brown rice,easy
+2,cooked brown rice,brownish rice grains,medium
+3,roti (whole wheat flatbread),roti,easy
+3,roti (whole wheat flatbread),whole wheat flatbread,easy
+3,roti (whole wheat flatbread),chapati,hard
+4,naan,naan bread,easy
+4,naan,leavened flatbread naan,easy
+4,naan,indian flatbread (uncertain),medium
+5,cooked dal (lentil curry),dal,easy
+5,cooked dal (lentil curry),lentil curry,easy
+5,cooked dal (lentil curry),yellow lentil soup,medium
+6,paneer,paneer cubes,easy
+6,paneer,indian cottage cheese,medium
+6,paneer,fresh cheese cubes,hard
+7,grilled chicken breast,grilled chicken breast,easy
+7,grilled chicken breast,chicken breast grilled,easy
+7,grilled chicken breast,plain grilled chicken,medium
+8,chicken curry,chicken curry,easy
+8,chicken curry,curried chicken in gravy,easy
+8,chicken curry,chicken in spicy sauce,medium
+9,mixed vegetable curry,mixed vegetable curry,easy
+9,mixed vegetable curry,vegetable curry (uncertain),easy
+9,mixed vegetable curry,mixed veg sabzi,hard
+10,scrambled eggs,scrambled eggs,easy
+10,scrambled eggs,eggs scrambled,easy
+10,scrambled eggs,fluffy cooked eggs,medium
+11,boiled egg,boiled egg,easy
+11,boiled egg,hard boiled egg,easy
+11,boiled egg,whole egg boiled,medium
+12,mashed potato,mashed potato,easy
+12,mashed potato,mashed potatoes,easy
+12,mashed potato,creamy potato mash,medium
+13,french fries,french fries,easy
+13,french fries,fried potato sticks,medium
+13,french fries,crispy potato fries,easy
+14,mixed green salad,mixed green salad,easy
+14,mixed green salad,garden salad,medium
+14,mixed green salad,leafy greens salad,easy
+15,idli,idli,easy
+15,idli,steamed rice cake,hard
+15,idli,idly (uncertain),medium
+16,dosa (plain),dosa,easy
+16,dosa (plain),plain dosa,easy
+16,dosa (plain),crepe-like rice pancake,hard
+17,sambar,sambar,easy
+17,sambar,lentil vegetable stew,hard
+17,sambar,sambhar (uncertain),medium
+18,curd/yogurt (plain),curd,easy
+18,curd/yogurt (plain),plain yogurt,easy
+18,curd/yogurt (plain),dahi,hard
+19,banana,banana,easy
+19,banana,ripe banana,easy
+19,banana,yellow banana fruit,easy
+20,apple,apple,easy
+20,apple,red apple,easy
+20,apple,fresh apple fruit,easy
+21,boiled/steamed mixed vegetables,steamed mixed vegetables,easy
+21,boiled/steamed mixed vegetables,boiled vegetables,easy
+21,boiled/steamed mixed vegetables,plain veg medley,medium
+22,biryani (chicken),chicken biryani,easy
+22,biryani (chicken),spiced rice with chicken,medium
+22,biryani (chicken),biryani (uncertain),easy
+23,paratha (plain),paratha,easy
+23,paratha (plain),plain paratha,easy
+23,paratha (plain),layered flatbread,hard
+24,omelette,omelette,easy
+24,omelette,plain omelette,easy
+24,omelette,folded egg omelet,medium
+25,fish curry,fish curry,easy
+25,fish curry,curried fish in gravy,easy
+25,fish curry,fish in spicy sauce,medium
+26,grilled fish,grilled fish,easy
+26,grilled fish,fish fillet grilled,easy
+26,grilled fish,charred fish piece,hard
+27,soup (vegetable broth-based),vegetable soup,easy
+27,soup (vegetable broth-based),broth-based veg soup,easy
+27,soup (vegetable broth-based),clear vegetable broth,medium
+28,pasta (plain and cooked),pasta,easy
+28,pasta (plain and cooked),cooked pasta,easy
+28,pasta (plain and cooked),plain noodles (uncertain),hard
+29,bread slice (white),white bread slice,easy
+29,bread slice (white),slice of bread,easy
+29,bread slice (white),plain white toast bread,medium
+30,peanut butter,peanut butter,easy
+30,peanut butter,creamy peanut butter,easy
+30,peanut butter,groundnut spread,hard

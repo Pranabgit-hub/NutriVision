@@ -1,0 +1,5 @@
+dish_id,image_path,total_mass,total_calories,total_protein,total_fat,total_carb
+SYNTHETIC_001,synthetic_001.jpg,320,410,28,12,45
+SYNTHETIC_002,synthetic_002.jpg,510,680,35,25,70
+SYNTHETIC_003,synthetic_003.jpg,215,190,8,4,32
+SYNTHETIC_004,synthetic_004.jpg,405,520,40,18,38

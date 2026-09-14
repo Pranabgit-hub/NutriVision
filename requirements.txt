@@ -1,0 +1,15 @@
+# Core (deterministic parts -- always needed)
+numpy>=1.24
+scipy>=1.10
+rapidfuzz>=3.0
+
+# Real VLM + chatbot calls (optional -- code degrades to mock without these)
+anthropic>=0.40
+
+# Real depth estimation (optional -- requires model-hub network access)
+transformers>=4.40
+torch>=2.0
+pillow>=10.0
+
+# Dev
+pytest>=7.0
