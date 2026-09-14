@@ -2,7 +2,8 @@
 Runnable end-to-end demo using mock depth/segmentation/VLM (no model-hub
 network access or GPU required). Real usage: swap the `.mock()` /
 `classify_mock()` calls for the real `.load()` / `classify_segment()` paths
-once you're running somewhere with model-hub access and an ANTHROPIC_API_KEY.
+once you're running somewhere with model-hub access and a (free) HF_TOKEN --
+see https://huggingface.co/settings/tokens.
 
 Run: python demo.py
 """
@@ -13,6 +14,7 @@ from pipeline.nutrition_db import NutritionDB
 from pipeline.storage import Storage, UserTargets
 from pipeline.pipeline import MealPipeline
 from pipeline.volume_estimator import CameraIntrinsics
+from pipeline.latency import LATENCY
 
 
 def main():
@@ -55,8 +57,17 @@ def main():
     print("segmentation masks (no real image was processed) -- this demo proves")
     print("the pipeline wiring, retrieval, and storage are correct end-to-end.")
     print("Plug in real depth_estimation.DepthEstimator.load() + segmentation.Segmenter.load()")
-    print("+ vlm_classifier.classify_segment() where you have model-hub/API access")
+    print("+ vlm_classifier.classify_segment() where you have model-hub/HF_TOKEN access")
     print("to get real numbers from a real photo.")
+
+    # This mock run never calls classify_segment() or chatbot.ask(), so there's
+    # nothing recorded under "vlm_classify" / "chatbot_turn" yet -- this just
+    # shows the shape of what you'd read off LATENCY once real calls happen.
+    # See pipeline/latency.py: percentiles (p95/p99), not just an average, are
+    # the numbers worth watching for a network-bound model call.
+    print("\n--- Latency tracking (empty in this mock run) ---")
+    print(f"  vlm_classify:  {LATENCY.summary('vlm_classify').as_dict()}")
+    print(f"  chatbot_turn:  {LATENCY.summary('chatbot_turn').as_dict()}")
 
 
 if __name__ == "__main__":

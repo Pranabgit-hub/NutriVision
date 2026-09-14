@@ -15,8 +15,8 @@ Everything else is fully implemented and tested.
 | Volume estimation from depth+mask (`volume_estimator.py`) | **Real.** Pure numpy geometry, no model weights needed. |
 | Macro calculation + aggregation (`nutrition_db.py`, `storage.py`) | **Real.** Deterministic arithmetic. |
 | Daily tracking, SQLite storage (`storage.py`) | **Real.** Incremental rollups, tested. |
-| Chatbot tool-calling loop (`chatbot.py`) | **Real**, calls the Claude API — needs `ANTHROPIC_API_KEY`. |
-| VLM ingredient classification (`vlm_classifier.py`) | **Real path implemented**, calls the Claude API on image crops — needs `ANTHROPIC_API_KEY`. Mock fallback (`classify_mock`) for offline dev. |
+| Chatbot tool-calling loop (`chatbot.py`) | **Real**, calls a free Hugging Face-hosted instruct model — needs `HF_TOKEN`. |
+| VLM ingredient classification (`vlm_classifier.py`) | **Real path implemented**, calls a free Hugging Face-hosted vision-language model on image crops — needs `HF_TOKEN`. Mock fallback (`classify_mock`) for offline dev. |
 | Monocular depth estimation (`depth_estimation.py`) | **Interface implemented**, real load path attempts `transformers` + Depth Anything V2 — **requires model-hub network access this environment doesn't have.** `DepthEstimator.mock()` provides a synthetic depth map so the rest of the pipeline is testable. |
 | Instance segmentation (`segmentation.py`) | **Interface implemented**, real path is SAM2 — same model-hub constraint as above. `Segmenter.mock_segments()` stands in. |
 
@@ -29,9 +29,63 @@ and prints daily progress against targets. Run `pytest tests/ -v` for the
 
 **To make this fully real**: run `depth_estimation.DepthEstimator.load()` and
 `segmentation.Segmenter.load()` (currently stubbed to raise a clear error)
-somewhere with Hugging Face access, and set `ANTHROPIC_API_KEY` for the VLM
-and chatbot calls. No other code changes needed — `pipeline.py` doesn't care
+somewhere with Hugging Face access, and set `HF_TOKEN` for the VLM and
+chatbot calls. No other code changes needed — `pipeline.py` doesn't care
 whether depth/segments are real or mocked, only whether `depth.metric is True`.
+
+## Free model backend: Hugging Face instead of a paid API
+
+`vlm_classifier.py` and `chatbot.py` both call the **free** Hugging Face
+Inference API (`huggingface_hub.InferenceClient`) rather than a paid LLM
+API — there's no recurring per-call cost anywhere in this pipeline now.
+
+- Get a free token at <https://huggingface.co/settings/tokens> and
+  `export HF_TOKEN=...`.
+- `vlm_classifier.py` defaults to `HF_VLM_MODEL=Qwen/Qwen2-VL-7B-Instruct`
+  for image-in, food-name-out classification.
+- `chatbot.py` defaults to `HF_CHAT_MODEL=meta-llama/Llama-3.1-8B-Instruct`
+  for the tool-calling chat loop (OpenAI-style function calling, which is
+  what HF's chat-completion API speaks — `TOOLS` in `chatbot.py` is defined
+  once and reshaped into that format).
+- Both env vars can point at any other model on the Hub, or at
+  `HF_ENDPOINT_URL` for a self-hosted TGI/vLLM endpoint (e.g. an Ollama-style
+  local deployment) using the same client, with no call-site changes.
+- Free tier is rate-limited, not unlimited — fine for development and a
+  prototype demo; for production traffic, either request higher rate limits
+  or point `HF_ENDPOINT_URL` at your own hosted instance of the same model.
+
+## Latency (p95/p99), not just averages
+
+Every external model call (`vlm_classify` in `vlm_classifier.py`,
+`chatbot_turn` in `chatbot.py`) is timed by the shared tracker in
+`pipeline/latency.py` and reported as **p50/p95/p99**, not a mean. A mean
+hides the failure mode that actually matters here: a handful of slow calls
+(HF cold-starting a model, a large image, a queued request) can blow past a
+user-facing latency budget while barely moving the average. `demo.py`
+prints `LATENCY.summary(...)` at the end of a run as an example of reading
+these back.
+
+This matters more once there's a network-facing edge in front of the
+pipeline — see `service/` below — where the gateway's own p95/p99 is
+tracked *separately* from the Python-side model-call p95/p99, on purpose:
+during an incident you want "was it the edge or the model?" to be two
+numbers you can compare, not one blended average you have to guess about.
+
+## The one Go component: `service/gateway.go`
+
+The rest of this repo is Python throughout — that's where the ML ecosystem
+lives, and it stays that way. The **one** place a different language earns
+its keep is the thin, concurrent, latency-tracked network edge that would
+sit in front of the Python backend in a real deployment: `service/gateway.go`
+is a small (~100-line), illustrative Go HTTP gateway doing exactly that —
+proxying `/classify` requests and exposing `/metrics` with its own
+p50/p95/p99. It is **not** wired into `demo.py` or the rest of the pipeline;
+see `service/README.md` for what it does, why Go specifically, and how to
+run it. Go's goroutines handle many concurrent image-upload requests more
+cheaply than Python's GIL-bound model would at this layer, and its GC pause
+times are predictable enough that the gateway's own overhead stays out of
+the p95/p99 budget you're actually trying to protect (the model-call
+latency, not the edge).
 
 ## Architecture
 
